@@ -1,31 +1,35 @@
-<a href="reference/doc1">Link To Doc</a>
+![image](../images/microchip.jpg)
 
-[![MCHP](https://cldup.com/U0qhLwBijF.png)](https://www.microchip.com) 
-# PIC18F47Q10 Hello World
+##  ADC Sampling at 1.1MSPS 
 
-## Objective
------
+## Description:
 
->In this project, an LED (Light Emitting Diode) is turned on by the PIC18F47Q10 microcontroller >using the Curiosity nano (Q10) development board platform. This is a great starting point for getting your Curiosity nano board running.
+In this example, ADC is set up to convert AIN0 using CH0 and CH1 sample/hold in 10-bit sequential mode 
+at 1.1MHz throughput rate. ADC clock is configured at 13.3Mhz or Tad=75ns
+ADC Conversion Time for 10-bit conversion is Tc=12 * Tab =  900ns (1.1MHz).
 
-## Procedure
------
+void initAdc1(void);
+ADC CH0 and CH1 S/H is set-up to covert AIN0 in 10-bit mode. ADC is configured to next sample data immediately after the conversion.
+So, ADC keeps conversion data through CH0/CH1 S/H alternatively. Effective conversion rate is 1.1Mhz
 
->The PIC18F47Q10 GPIO pin RE0, connected to LED0 on the Curiosity nano - Q10 board, is setup as an output to control the LED.
+void initDma0(void);
+DMA channel 0 is configured in ping-pong mode to move the converted data from ADC to DMA RAM on every sample/convert sequence. 
+It generates interrupt after every 16 sample transfer. 
 
->The project uses: [PIC18F47Q10 Microcontoller](https://www.microchip.com/wwwproducts/en/PIC18F47Q10)
+void \__attribute\__((\__interrupt\__)) _DMA0Interrupt(void);
+DMA interrupt service routine, moves the data from DMA buffer to ADC signal buffer and collects 256 samples.
 
->To follow along with these steps, MPLAB® Xpress cloud based IDE should be open. The setup is described in the steps of this training module. You should see a screen similar to the one shown here to start.
+The Toggle frequency of one pulse should be around 240us(micro second), if the operating clock frequency at 40Mhz.
+Short AN0/AN1 with +3.3v to get analog signal for sampling. These values should be approximately around 0x7FXXX when checked in the bufferA/bufferB in the code.
 
-![](https://static.transim.com/img/102019/ef2a7b0347504c6ca53b69872bf32b1c-n2mdq.png){width=auto height=auto align=center}
 
-<!DOCTYPE html>
-<html>
-<body>
+## Hardware Used
 
-<h1>My First Heading</h1>
+- Explorer 16/32 Development Board (https://www.microchip.com/DM240001-2)
+- dsPIC33EP512GM710 PIM (https://www.microchip.com/ma330035) or dsPIC33EP512MU810 PIM (https://www.microchip.com/MA330025-1) or dsPIC33EP256GP506 PIM (https://www.microchip.com/MA330030)
+	
+	
+## Software Used 
 
-<p>My first paragraph.</p>
-
-</body>
-</html>
+- MPLAB� X IDE v5.50 or newer (https://www.microchip.com/mplabx)
+- MPLAB� XC16 v1.70 or newer (https://www.microchip.com/xc)
